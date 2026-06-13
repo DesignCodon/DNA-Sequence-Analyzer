@@ -1,4 +1,4 @@
-from analyze import fasta, seq_validate, count_base, gc_percenage, comp, translate, find_orfs
+from analyze import fasta, seq_validate, count_base, gc_percentage, revcomp, translate, find_orfs
 
 #----- Main program-----#   
 
@@ -6,7 +6,12 @@ print("DNA Sequence Analysis")
 print("*"*23)
 
 file_name = input("Enter the name of the FASTA file (including extension): ")
-sequence = fasta(file_name)
+
+try:
+    sequence = fasta(file_name)
+except FileNotFoundError:
+    print("File not found.")
+    exit()
 
 if(seq_validate(sequence)==False):
     print("Invalid sequence")
@@ -19,19 +24,19 @@ else:
     print(f"G: {count['G']}")
     print(f"C: {count['C']}")
 
-    print(f'\nGC content: {gc_percenage(sequence)}%')
+    print(f'\nGC content: {gc_percentage(sequence)}%')
   
-    print(f"\nReverse Complement: {comp(sequence)}")
+    print(f"\nReverse Complement: {revcomp(sequence)}")
 
-    # replacing T with U to get the mRNA sequence (Transcription)
-    mRNA = comp(sequence).replace('T', 'U')
-    print(f"\nThe mRNA sequence (transcription) is: {mRNA}") 
+    # replacing T with U to get the RNA sequence (Transcription)
+    RNA = sequence.replace('T','U')
+    print(f"\nThe RNA sequence (transcription) is: {RNA}") 
 
-    print(f"\nThe translated protein sequence is: {translate(mRNA)}")
-    print("(* represents the translation termination point.)")
+    print(f"\nThe complete translated sequence is: {translate(RNA)}")
+    print("(if * in translated sequence, means present of stop codon in RNA sequence.)")
 
     orfs = find_orfs(sequence)
-    print(f"\nThe ORFs found in the sequence is/are: {orfs}")
-    orf_proteins = [translate(comp(orf).replace('T', 'U')) for orf in orfs]
+    print(f"\nThe ORFs found in the sequence is: {orfs}")
+    orf_proteins = [translate(orf.replace('T', 'U')) for orf in orfs]
     print(f"\nThe protein sequences translated from the ORFs is/are: {orf_proteins}")
     

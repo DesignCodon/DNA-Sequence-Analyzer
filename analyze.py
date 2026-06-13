@@ -14,6 +14,7 @@ def fasta(filename):
 
     return ''.join(seq_lines).upper()
 
+
 # 2.function to validate the input sequence 
 def seq_validate(seq):
     valid_base = {'A', 'T', 'G', 'C'}
@@ -30,13 +31,13 @@ def count_base (seq):
     return count
 
 # 4. function to calculate the GC content of the input sequence
-def gc_percenage(seq):
+def gc_percentage(seq):
     count = count_base(seq)
     gc = (((count['G'] + count['C']) / len(seq)) * 100)
     return round(gc, 2)
 
 # 5. function to return the complement of the input sequence
-def comp(sequence):
+def revcomp(sequence):
     result = []
     for base in sequence:
         if base == 'A':
@@ -48,10 +49,10 @@ def comp(sequence):
         elif base == 'C':
             result.append('G')
 
-    return ''.join(result)
+    return ''.join(result)[::-1]
 
 # 6. function for mRNA-->Protein translation.
-def translate(mrna):
+def translate(rna):
     codon_table = {
         'UUU': 'F', 'UUC': 'F', 'UUA': 'L', 'UUG': 'L',
         'UCU': 'S', 'UCC': 'S', 'UCA': 'S', 'UCG': 'S',
@@ -71,8 +72,8 @@ def translate(mrna):
         "GGU": "G", 	"GGC":"G", 	"GGA":"G", 	"GGG":"G"
     }
     protein = []
-    for i in range(0, len(mrna), 3):
-        codon = mrna[i:i+3]
+    for i in range(0, len(rna)-2, 3):
+        codon = rna[i:i+3]
         if codon in codon_table:
             protein.append(codon_table[codon])
     return ''.join(protein)
@@ -83,13 +84,22 @@ def find_orfs(sequence):
     stop_codons = {'TAA', 'TAG', 'TGA'}
     orfs = []
 
-    for i in range(len(sequence) - 2):
-        codon = sequence[i:i+3]
-        if codon == start_codon:
-            for j in range(i + 3, len(sequence) - 2, 3):
-                stop_codon = sequence[j:j+3]
-                if stop_codon in stop_codons:
-                    orfs.append(sequence[i:j+3])
-                    break
+    # Check all three reading frames
+    for frame in range(3):
+
+        for i in range(frame, len(sequence) - 2, 3):
+
+            codon = sequence[i:i+3]
+
+            if codon == start_codon:
+
+                for j in range(i + 3, len(sequence) - 2, 3):
+
+                    stop_codon = sequence[j:j+3]
+
+                    if stop_codon in stop_codons:
+
+                        orfs.append(sequence[i:j+3])
+                        break
 
     return orfs
