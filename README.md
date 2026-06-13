@@ -126,11 +126,7 @@ Some features I would like to add in the future:
 
 * Support for multiple sequences in a FASTA file
 * Restriction enzyme site analysis
-* Motif searching
-* Sequence alignment
-* Report generation
 * Biopython integration
-* Simple graphical interface
 
 ---
 
